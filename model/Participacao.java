@@ -1,6 +1,7 @@
 package model;
 
 public class Participacao {
+    private int id;
     private Voluntario voluntario;
     private AcaoAmbiental acaoAmbiental;
 
@@ -23,6 +24,14 @@ public class Participacao {
 
     public void setAcaoAmbiental(AcaoAmbiental acaoAmbiental) {
         this.acaoAmbiental = acaoAmbiental;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void exibirDetalhesParticipacao() {

@@ -2,28 +2,23 @@ package main;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import model.AcaoAmbiental;
 import model.EducacaoAmbiental;
 import model.Limpeza;
-import model.Participacao;
 import model.Plantio;
 import model.Voluntario;
 import service.CertificadoPadrao;
 import service.GeradorCertificado;
-import service.VoluntariaService;
+import service.VoluntariadoService;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        List<Voluntario> voluntarios = new ArrayList<>();
-        List<AcaoAmbiental> acoesAmbientais = new ArrayList<>();
-        List<Participacao> participacoes = new ArrayList<>();
         GeradorCertificado geradorCertificado = new CertificadoPadrao();
-        VoluntariaService service = new VoluntariaService(voluntarios, acoesAmbientais, participacoes, geradorCertificado);
+        VoluntariadoService service = new VoluntariadoService(geradorCertificado);
 
         int opcao;
         do {
@@ -90,15 +85,15 @@ public class Main {
         } while (opcao != 0);
     }
 
-    private static void cadastrarVoluntario(VoluntariaService service) {
+    private static void cadastrarVoluntario(VoluntariadoService service) {
         String nome = lerTexto("Nome do voluntário: ");
-        int telefone = lerInteiro("Telefone: ");
+        String telefone = lerTexto("Telefone: ");
         Voluntario voluntario = new Voluntario(nome, telefone);
         service.cadastrarVoluntario(voluntario);
         System.out.println("Voluntário cadastrado com sucesso!");
     }
 
-    private static void listarVoluntarios(VoluntariaService service) {
+    private static void listarVoluntarios(VoluntariadoService service) {
         List<Voluntario> voluntarios = service.getVoluntarios();
         if (voluntarios.isEmpty()) {
             System.out.println("Nenhum voluntário cadastrado.");
@@ -108,11 +103,11 @@ public class Main {
         System.out.println("\nVoluntários cadastrados:");
         for (int i = 0; i < voluntarios.size(); i++) {
             Voluntario voluntario = voluntarios.get(i);
-            System.out.println((i + 1) + " - " + voluntario.getNome() + " | Telefone: " + voluntario.getTelefone());
+            System.out.println((i + 1) + " - " + voluntario.getNome() + " | Telefone: " + voluntario.getTelefone() + " | ID: " + voluntario.getId());
         }
     }
 
-    private static void atualizarVoluntario(VoluntariaService service) {
+    private static void atualizarVoluntario(VoluntariadoService service) {
         String nomeAtual = lerTexto("Nome do voluntário a atualizar: ");
         Voluntario voluntario = service.buscarVoluntarioPorNome(nomeAtual);
 
@@ -122,28 +117,25 @@ public class Main {
         }
 
         String novoNome = lerTexto("Novo nome: ");
-        int novoTelefone = lerInteiro("Novo telefone: ");
+        String novoTelefone = lerTexto("Novo telefone: ");
         voluntario.setNome(novoNome);
         voluntario.setTelefone(novoTelefone);
+        service.atualizarVoluntario(voluntario);
         System.out.println("Voluntário atualizado com sucesso!");
     }
 
-    private static void excluirVoluntario(VoluntariaService service) {
+    private static void excluirVoluntario(VoluntariadoService service) {
         String nome = lerTexto("Nome do voluntário a excluir: ");
-        List<Voluntario> voluntarios = service.getVoluntarios();
-        List<Participacao> participacoes = service.getParticipacoes();
-
-        boolean removido = voluntarios.removeIf(voluntario -> voluntario.getNome().equalsIgnoreCase(nome));
-        participacoes.removeIf(participacao -> participacao.getVoluntario().getNome().equalsIgnoreCase(nome));
-
-        if (removido) {
+        Voluntario voluntario = service.buscarVoluntarioPorNome(nome);
+        if (voluntario != null) {
+            service.excluirVoluntario(voluntario.getId());
             System.out.println("Voluntário excluído com sucesso!");
         } else {
             System.out.println("Voluntário não encontrado.");
         }
     }
 
-    private static void cadastrarAcaoAmbiental(VoluntariaService service) {
+    private static void cadastrarAcaoAmbiental(VoluntariadoService service) {
         System.out.println("Escolha o tipo de ação ambiental:");
         System.out.println("1 - Educação Ambiental");
         System.out.println("2 - Limpeza");
@@ -177,7 +169,7 @@ public class Main {
         System.out.println("Ação ambiental cadastrada com sucesso!");
     }
 
-    private static void listarAcoesAmbientais(VoluntariaService service) {
+    private static void listarAcoesAmbientais(VoluntariadoService service) {
         List<AcaoAmbiental> acoes = service.getAcoesAmbientais();
         if (acoes.isEmpty()) {
             System.out.println("Nenhuma ação ambiental cadastrada.");
@@ -188,11 +180,11 @@ public class Main {
         for (int i = 0; i < acoes.size(); i++) {
             AcaoAmbiental acao = acoes.get(i);
             System.out.println((i + 1) + " - " + acao.getClass().getSimpleName() + " | Local: " + acao.getLocal()
-                    + " | Data: " + acao.getData() + " | Duração: " + acao.getDuracaoHoras() + "h");
+                    + " | Data: " + acao.getData() + " | Duração: " + acao.getDuracaoHoras() + "h | ID: " + acao.getId());
         }
     }
 
-    private static void atualizarAcaoAmbiental(VoluntariaService service) {
+    private static void atualizarAcaoAmbiental(VoluntariadoService service) {
         List<AcaoAmbiental> acoes = service.getAcoesAmbientais();
         if (acoes.isEmpty()) {
             System.out.println("Nenhuma ação ambiental cadastrada.");
@@ -200,7 +192,7 @@ public class Main {
         }
 
         listarAcoesAmbientais(service);
-        int indice = lerInteiro("Informe o número da ação a atualizar: ") - 1;
+        int indice = lerInteiro("Informe o número da ação a atualizar (da lista acima): ") - 1;
         if (indice < 0 || indice >= acoes.size()) {
             System.out.println("Índice inválido.");
             return;
@@ -215,21 +207,11 @@ public class Main {
         acao.setData(novaData);
         acao.setDuracaoHoras(novaDuracao);
 
-        if (acao instanceof EducacaoAmbiental) {
-            int novoNumeroParticipantes = lerInteiro("Novo número de participantes: ");
-            ((EducacaoAmbiental) acao).setNumeroParticipantes(novoNumeroParticipantes);
-        } else if (acao instanceof Limpeza) {
-            int novaQuantidadeLixo = lerInteiro("Nova quantidade de lixo coletado: ");
-            ((Limpeza) acao).setQuantidadeLixoColetado(novaQuantidadeLixo);
-        } else if (acao instanceof Plantio) {
-            int novaQuantidadeArvores = lerInteiro("Nova quantidade de árvores plantadas: ");
-            ((Plantio) acao).setQuantidadeArvoresPlantadas(novaQuantidadeArvores);
-        }
-
+        service.atualizarAcaoAmbiental(acao);
         System.out.println("Ação ambiental atualizada com sucesso!");
     }
 
-    private static void excluirAcaoAmbiental(VoluntariaService service) {
+    private static void excluirAcaoAmbiental(VoluntariadoService service) {
         List<AcaoAmbiental> acoes = service.getAcoesAmbientais();
         if (acoes.isEmpty()) {
             System.out.println("Nenhuma ação ambiental cadastrada.");
@@ -237,17 +219,17 @@ public class Main {
         }
 
         listarAcoesAmbientais(service);
-        int indice = lerInteiro("Informe o número da ação a excluir: ") - 1;
+        int indice = lerInteiro("Informe o número da ação a excluir (da lista acima): ") - 1;
         if (indice < 0 || indice >= acoes.size()) {
             System.out.println("Índice inválido.");
             return;
         }
 
-        acoes.remove(indice);
+        service.excluirAcaoAmbiental(acoes.get(indice).getId());
         System.out.println("Ação ambiental excluída com sucesso!");
     }
 
-    private static void registrarParticipacao(VoluntariaService service) {
+    private static void registrarParticipacao(VoluntariadoService service) {
         String nomeVoluntario = lerTexto("Nome do voluntário: ");
         Voluntario voluntario = service.buscarVoluntarioPorNome(nomeVoluntario);
         if (voluntario == null) {
@@ -262,7 +244,7 @@ public class Main {
         }
 
         listarAcoesAmbientais(service);
-        int indice = lerInteiro("Informe o número da ação: ") - 1;
+        int indice = lerInteiro("Informe o número da ação (da lista acima): ") - 1;
         if (indice < 0 || indice >= acoes.size()) {
             System.out.println("Índice inválido.");
             return;
@@ -272,7 +254,7 @@ public class Main {
         System.out.println("Participação registrada com sucesso!");
     }
 
-    private static void emitirCertificado(VoluntariaService service) {
+    private static void emitirCertificado(VoluntariadoService service) {
         String nomeVoluntario = lerTexto("Nome do voluntário: ");
         Voluntario voluntario = service.buscarVoluntarioPorNome(nomeVoluntario);
         if (voluntario == null) {
@@ -280,11 +262,15 @@ public class Main {
             return;
         }
 
-        String certificado = service.emitirCertificado(voluntario);
-        System.out.println(certificado);
+        try {
+            String certificado = service.emitirCertificado(voluntario);
+            System.out.println(certificado);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    private static void relatorioCargaHoraria(VoluntariaService service) {
+    private static void relatorioCargaHoraria(VoluntariadoService service) {
         if (service.getVoluntarios().isEmpty()) {
             System.out.println("Nenhum voluntário cadastrado.");
             return;
@@ -292,12 +278,12 @@ public class Main {
 
         System.out.println("\nRelatório de carga horária:");
         for (Voluntario voluntario : service.getVoluntarios()) {
-            double total = service.calcularCargaHorariaTotal(voluntario);
+            double total = service.calcularTotalHoras(voluntario);
             System.out.println(voluntario.getNome() + " - " + total + " horas");
         }
     }
 
-    private static void relatorioAcoesPorTipo(VoluntariaService service) {
+    private static void relatorioAcoesPorTipo(VoluntariadoService service) {
         int educacao = 0;
         int limpeza = 0;
         int plantio = 0;

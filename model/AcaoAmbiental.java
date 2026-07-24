@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDate;
 
 public abstract class AcaoAmbiental {
+    private int id;
     private String local;
     private LocalDate data;
     private double duracaoHoras;
@@ -35,6 +36,14 @@ public abstract class AcaoAmbiental {
 
     public void setDuracaoHoras(double duracaoHoras) {
         this.duracaoHoras = duracaoHoras;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public abstract double fatorDeImpacto();

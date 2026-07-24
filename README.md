@@ -41,3 +41,12 @@ Siga os passos abaixo para compilar e executar o sistema localmente:
    ```
 
 5. O menu interativo aparecerá no terminal. Basta digitar o número da opção desejada e pressionar Enter.
+
+## Integrantes
+- Ana Kelley - Líder<br>
+  
+- Elano Serrão <br>
+  
+- Izhac Nylton <br>
+  Izhac2006@gmail.com
+- Victor Emanuel<br>

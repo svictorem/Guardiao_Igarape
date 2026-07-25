@@ -59,10 +59,6 @@ INSERT INTO participacao (voluntario_id, acao_id) VALUES
 (7, 7), -- Mariana na Limpeza do Quarenta
 (8, 8); -- Rafael na Educação Ambiental do Bindá
 
-select*from voluntario;
-select*from acao_ambiental;
-select*from participacao;
-
 -- 1. Remove a restrição antiga
 ALTER TABLE participacao DROP FOREIGN KEY fk_voluntario;
 
@@ -71,3 +67,22 @@ ALTER TABLE participacao
 ADD CONSTRAINT fk_voluntario 
 FOREIGN KEY (voluntario_id) REFERENCES voluntario(voluntario_id) 
 ON DELETE CASCADE;
+
+-- 1. Altera a coluna para aceitar números decimais
+ALTER TABLE acao_ambiental MODIFY COLUMN duracao_horas DOUBLE NOT NULL;
+
+-- 2. Atualize os registros existentes para valores numéricos
+UPDATE acao_ambiental SET duracao_horas = 4.0 WHERE acao_id = 1;
+UPDATE acao_ambiental SET duracao_horas = 5.0 WHERE acao_id = 2;
+UPDATE acao_ambiental SET duracao_horas = 3.0 WHERE acao_id = 3;
+UPDATE acao_ambiental SET duracao_horas = 6.0 WHERE acao_id = 4;
+UPDATE acao_ambiental SET duracao_horas = 4.0 WHERE acao_id = 5;
+UPDATE acao_ambiental SET duracao_horas = 3.5 WHERE acao_id = 6;
+UPDATE acao_ambiental SET duracao_horas = 5.0 WHERE acao_id = 7;
+UPDATE acao_ambiental SET duracao_horas = 2.5 WHERE acao_id = 8;
+UPDATE acao_ambiental SET duracao_horas = 4.0 WHERE acao_id = 9;
+UPDATE acao_ambiental SET duracao_horas = 6.0 WHERE acao_id = 10;
+
+select*from voluntario;
+select*from acao_ambiental;
+select*from participacao;

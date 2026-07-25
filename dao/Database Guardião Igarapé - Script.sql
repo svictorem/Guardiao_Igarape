@@ -11,7 +11,7 @@ create table acao_ambiental(
 	acao_id int primary key auto_increment,
     acao_local varchar(255) not null,
     acao_data date not null,
-    duracao_horas double not null,
+    duracao_horas time not null,
     acao_tipo varchar(100) not null
 );
 

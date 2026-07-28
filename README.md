@@ -47,3 +47,6 @@ Siga os passos abaixo para compilar e executar o sistema localmente:
 - **Elano Serrão** - serraoelano7@gmail.com
 - **Izhac Nylton** - izhac2006@gmail.com
 - **Victor Emanuel** - victoroliveira280780@gmail.com
+
+## Slide link
+https://canva.link/v3e7qxh9rhu72jy
